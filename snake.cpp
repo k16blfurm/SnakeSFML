@@ -26,8 +26,7 @@ int main()
     sf::Text text("Welcome to Snake", font, 50);
     sf::Text Start("Start", font, 50);
     sf::Text Exit("Exit", font, 50);
-    float timer=0, delay=0.1;
-    window.setFramerateLimit(60);
+    sf::Event event;
 
 
 
@@ -61,89 +60,101 @@ int main()
 
     while (window.isOpen())
     {
-        float time = clock.getElapsedTime().asSeconds();
-		clock.restart();
-        timer+=time; 
-
 
         // Process events
-        sf::Event event;
         while (window.pollEvent(event))
         {
             // Close window: exit
             if (event.type == sf::Event::Closed)
                 window.close();
-        }
+        
 
 
-        // Clear screen
-        window.clear();
+            // Clear screen
+            window.clear();
 
-
-            // left key is pressed: move our character
-            if(selection == 0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-            {   Start.setFillColor(sf::Color(255,255,255));
-                window.draw(Start);
-                selection = selection + 1;
-                printf("here1\n");
-            }
-            if(selection == 1 && sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            if(selection == 2 && sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
             {
                 Exit.setFillColor(sf::Color(255,255,255));
-                window.draw(Exit);
+                //window.draw(Exit);
                 selection = selection + 1;
                 printf("here2\n");
             }
 
-            if(selection == 2 && sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            if(selection == 2 && sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
             {
-                text.setFillColor(sf::Color(255,255,255));
-                window.draw(text);
-                selection = 0;
-                printf("here3\n");
+                return(0);
             }
+
+            // left key is pressed: move our character
+            if(selection == 0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            {   Start.setFillColor(sf::Color(255,255,255));
+                //window.draw(Start);
+                selection = selection + 1;
+                printf("here1\n");
+            }
+
+            if(selection == 0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
+            {   
+                menu = true;
+            }
+            
 
         if(menu == true){
             // moves the sprite
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
             {
-                snakeSprite.move(-1.f, 0.f);
+                snakeSprite.move(-5.f, 0.f);
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
             {
-                snakeSprite.move(1.f, 0.f);
+                snakeSprite.move(5.f, 0.f);
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
             {
-                snakeSprite.move(0.f, -1.f);
+                snakeSprite.move(0.f, -5.f);
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
             {
-                snakeSprite.move(0.f, 1.f);
+                snakeSprite.move(0.f, 5.f);
             }   
             window.draw(snakeSprite);
         }
 
 
-        if(selection == 0)
-        {Exit.setFillColor(sf::Color(255,0,255));}
-
         if(selection == 1)
-        text.setFillColor(sf::Color(255,0,255));
+        {
+            Exit.setFillColor(sf::Color(255,0,255));
+            selection = selection + 1;
+        }
 
-        if(selection == 2)
-        Start.setFillColor(sf::Color(255,0,255));
+        if(selection == 3)
+        {
+            Start.setFillColor(sf::Color(255,0,255));
+            selection = 0;
+        }
+
 
         // Draw the sprite
         window.draw(sprite);
-        // Draw the snake
+        if(menu == true)
+        {
+            // Draw the snake
+            window.draw(snakeSprite);
+        }
 
         // Draw the string
+        if( menu == false)
+        {
         window.draw(text);
         window.draw(Start);
         window.draw(Exit);
+        }
         // Update the window
         window.display();
+
+        }
+    
     }
     return EXIT_SUCCESS;
 }
