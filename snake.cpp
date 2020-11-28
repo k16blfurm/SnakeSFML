@@ -10,8 +10,8 @@ int N=30,M=20;
 int size=16;
 int w = size*N;
 int h = size*M;
-
 int dir,num=4;
+
 
 int main()
 {
@@ -27,7 +27,11 @@ int main()
     sf::Text Start("Start", font, 50);
     sf::Text Exit("Exit", font, 50);
     sf::Event event;
-
+    sf::RectangleShape snakeSprite(sf::Vector2f(25.f, 25.f));
+    int SnakeMovement;
+    int count;
+    sf::Vector2f SnakePositionBound1(0.0f, 0.0f);
+    sf::Vector2f SnakePositionBound2(800.0f, 600.0f);
 
 
     if (!texture.loadFromFile("assets/cute_image.jpg"))
@@ -35,13 +39,10 @@ int main()
 
     snake.loadFromFile("assets/whiteDot.png");
    
-
     //  snakeSprite.Resize( 10, 10);
-    sf::Sprite snakeSprite(snake);
     sf::Sprite sprite(texture);
 
     // Create a graphical text to display
-    
     if (!font.loadFromFile("assets/arial.ttf"))
         return EXIT_FAILURE;
     
@@ -67,8 +68,6 @@ int main()
             // Close window: exit
             if (event.type == sf::Event::Closed)
                 window.close();
-        
-
 
             // Clear screen
             window.clear();
@@ -76,9 +75,7 @@ int main()
             if(selection == 2 && sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
             {
                 Exit.setFillColor(sf::Color(255,255,255));
-                //window.draw(Exit);
                 selection = selection + 1;
-                printf("here2\n");
             }
 
             if(selection == 2 && sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
@@ -89,9 +86,7 @@ int main()
             // left key is pressed: move our character
             if(selection == 0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
             {   Start.setFillColor(sf::Color(255,255,255));
-                //window.draw(Start);
                 selection = selection + 1;
-                printf("here1\n");
             }
 
             if(selection == 0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
@@ -104,23 +99,22 @@ int main()
             // moves the sprite
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
             {
-                snakeSprite.move(-5.f, 0.f);
+                SnakeMovement = 0;
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
             {
-                snakeSprite.move(5.f, 0.f);
+                SnakeMovement = 1;
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
             {
-                snakeSprite.move(0.f, -5.f);
+                SnakeMovement = 2;
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
             {
-                snakeSprite.move(0.f, 5.f);
+                SnakeMovement = 3;
             }   
             window.draw(snakeSprite);
         }
-
 
         if(selection == 1)
         {
@@ -134,27 +128,61 @@ int main()
             selection = 0;
         }
 
+    }
+
+        count = count + 1;
+
+         //snakeSprite.getPosition().y;
+
+        if(count == 50)
+        {
+            if(SnakeMovement == 0)
+            {
+                if(snakeSprite.getPosition().x != 0.0f)
+                    snakeSprite.move(-1.f, 0.f);
+
+                printf("here");
+            }
+
+            if(SnakeMovement == 1)
+            {
+                //if(SnakePositionX != 800)
+                    snakeSprite.move(1.f, 0.f);
+            }
+
+            if(SnakeMovement == 2)
+            {
+                //if(SnakePositionY != 0)
+                    snakeSprite.move(0.f, -1.f);
+            }
+
+            if(SnakeMovement == 3)
+            {
+                //if(SnakePositionX != 600)
+                    snakeSprite.move(0.f, 1.f);
+            }
+            count = 0;
+        }
 
         // Draw the sprite
         window.draw(sprite);
+
+         // Draw the menu if first starting the game
+        if( menu == false)
+        {
+            window.draw(text);
+            window.draw(Start);
+            window.draw(Exit);
+        }
+        
         if(menu == true)
         {
             // Draw the snake
             window.draw(snakeSprite);
         }
 
-        // Draw the string
-        if( menu == false)
-        {
-        window.draw(text);
-        window.draw(Start);
-        window.draw(Exit);
-        }
-        // Update the window
         window.display();
 
-        }
-    
     }
     return EXIT_SUCCESS;
 }
