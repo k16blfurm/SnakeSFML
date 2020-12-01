@@ -5,6 +5,7 @@
 #include <SFML/System/Clock.hpp>
 #include <stdio.h>
 #include <unistd.h>
+#include <SFML/System/Vector2.hpp>
 
 int N=30,M=20;
 int size=16;
@@ -19,6 +20,7 @@ int main()
     sf::Clock clock;
     bool menu = false;
     int selection = 0;
+    int score = 0;
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
     sf::Texture texture;
     sf::Texture snake;
@@ -28,24 +30,23 @@ int main()
     sf::Text Exit("Exit", font, 50);
     sf::Event event;
     sf::RectangleShape snakeSprite(sf::Vector2f(25.f, 25.f));
+    sf::RectangleShape background(sf::Vector2f(800.0f, 600.0f));
+    sf::RectangleShape snakeSnack(sf::Vector2f(25.f, 25.f));
     int SnakeMovement;
     int count;
-    sf::Vector2f SnakePositionBound1(0.0f, 0.0f);
-    sf::Vector2f SnakePositionBound2(800.0f, 600.0f);
+    bool eaten = true;
 
 
-    if (!texture.loadFromFile("assets/cute_image.jpg"))
-        return EXIT_FAILURE;
+    //setting background to black
+    background.setFillColor(sf::Color::Black);
 
     snake.loadFromFile("assets/whiteDot.png");
-   
-    //  snakeSprite.Resize( 10, 10);
-    sf::Sprite sprite(texture);
 
     // Create a graphical text to display
     if (!font.loadFromFile("assets/arial.ttf"))
         return EXIT_FAILURE;
     
+    snakeSnack.setFillColor(sf::Color::White);
 
     text.setPosition(100.f, 100.f);
     Start.setPosition(100.f, 200.f);
@@ -95,40 +96,44 @@ int main()
             }
             
 
-        if(menu == true){
-            // moves the sprite
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-            {
-                SnakeMovement = 0;
+            if(menu == true){
+                // moves the sprite
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+                {
+                    SnakeMovement = 0;
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+                {
+                    SnakeMovement = 1;
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+                {
+                    SnakeMovement = 2;
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+                {
+                    SnakeMovement = 3;
+                }   
+                window.draw(snakeSprite);
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+
+            if(selection == 1)
             {
-                SnakeMovement = 1;
+                Exit.setFillColor(sf::Color(255,0,255));
+                selection = selection + 1;
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+
+            if(selection == 3)
             {
-                SnakeMovement = 2;
+                Start.setFillColor(sf::Color(255,0,255));
+                selection = 0;
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-            {
-                SnakeMovement = 3;
-            }   
-            window.draw(snakeSprite);
-        }
 
-        if(selection == 1)
-        {
-            Exit.setFillColor(sf::Color(255,0,255));
-            selection = selection + 1;
-        }
+            //thing to eat
 
-        if(selection == 3)
-        {
-            Start.setFillColor(sf::Color(255,0,255));
-            selection = 0;
-        }
 
-    }
+
+        }   
 
         count = count + 1;
 
@@ -136,36 +141,42 @@ int main()
 
         if(count == 50)
         {
+            
             if(SnakeMovement == 0)
             {
-                if(snakeSprite.getPosition().x != 0.0f)
+                if(snakeSprite.getPosition().x > 0)
+                {
                     snakeSprite.move(-1.f, 0.f);
-
-                printf("here");
+                }
+                
+                
             }
 
             if(SnakeMovement == 1)
             {
-                //if(SnakePositionX != 800)
+                if(snakeSprite.getPosition().x < 775)
                     snakeSprite.move(1.f, 0.f);
+                
             }
 
             if(SnakeMovement == 2)
             {
-                //if(SnakePositionY != 0)
+                if(snakeSprite.getPosition().y > 0)
                     snakeSprite.move(0.f, -1.f);
+                
             }
 
             if(SnakeMovement == 3)
             {
-                //if(SnakePositionX != 600)
+                if(snakeSprite.getPosition().y < 575)
                     snakeSprite.move(0.f, 1.f);
+                
             }
             count = 0;
         }
 
         // Draw the sprite
-        window.draw(sprite);
+        window.draw(background);
 
          // Draw the menu if first starting the game
         if( menu == false)
@@ -177,8 +188,22 @@ int main()
         
         if(menu == true)
         {
-            // Draw the snake
+            // Draw the snake/dot to be eaten 
             window.draw(snakeSprite);
+            window.draw(snakeSnack);
+
+            if(snakeSprite.getPosition() == snakeSnack.getPosition())
+            {
+                eaten = true;
+                score = score + 1; 
+            }
+
+
+            if(eaten == true)
+            {   // this is for redrawing in a different area
+                snakeSnack.setPosition(rand()%801, rand() %601);
+                eaten = false;
+            }
         }
 
         window.display();
