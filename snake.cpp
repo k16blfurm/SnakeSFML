@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <SFML/System/Vector2.hpp>
+#include <map>
+
 
 int N=30,M=20;
 int size=16;
@@ -32,9 +34,15 @@ int main()
     sf::RectangleShape snakeSprite(sf::Vector2f(25.f, 25.f));
     sf::RectangleShape background(sf::Vector2f(800.0f, 600.0f));
     sf::RectangleShape snakeSnack(sf::Vector2f(25.f, 25.f));
+    //sf::IntRect boundsSnake();
+    //sf::IntRect boundsSnack();
+    const sf::Vector2f boundaries(25.0f, 25.0f);
+    sf::Music music;
+
     int SnakeMovement;
     int count;
     bool eaten = true;
+
 
 
     //setting background to black
@@ -53,13 +61,12 @@ int main()
     Exit.setPosition(100.f, 300.f);
 
     // Load a music to play
-    //sf::Music music;
-    //if (!music.openFromFile("nice_music.ogg"))
-     //   return EXIT_FAILURE;
-    // Play the music
-    //music.play();
-    // Start the game loop
 
+    if (!music.openFromFile("music.ogg"))
+        return EXIT_FAILURE;
+    // Play the music
+    music.play();
+    // Start the game loop
     while (window.isOpen())
     {
 
@@ -129,47 +136,42 @@ int main()
                 selection = 0;
             }
 
-            //thing to eat
-
-
-
         }   
 
         count = count + 1;
 
-         //snakeSprite.getPosition().y;
+        printf("%d \n", count);
 
-        if(count == 50)
+        if(count >= 50)
         {
             
             if(SnakeMovement == 0)
             {
                 if(snakeSprite.getPosition().x > 0)
                 {
-                    snakeSprite.move(-1.f, 0.f);
+                    snakeSprite.move(-4.f, 0.f);
                 }
-                
                 
             }
 
             if(SnakeMovement == 1)
             {
                 if(snakeSprite.getPosition().x < 775)
-                    snakeSprite.move(1.f, 0.f);
+                    snakeSprite.move(4.f, 0.f);
                 
             }
 
             if(SnakeMovement == 2)
             {
                 if(snakeSprite.getPosition().y > 0)
-                    snakeSprite.move(0.f, -1.f);
+                    snakeSprite.move(0.f, -4.f);
                 
             }
 
             if(SnakeMovement == 3)
             {
                 if(snakeSprite.getPosition().y < 575)
-                    snakeSprite.move(0.f, 1.f);
+                    snakeSprite.move(0.f, 4.f);
                 
             }
             count = 0;
@@ -191,13 +193,22 @@ int main()
             // Draw the snake/dot to be eaten 
             window.draw(snakeSprite);
             window.draw(snakeSnack);
-
-            if(snakeSprite.getPosition() == snakeSnack.getPosition())
+ 
+            if((snakeSprite.getPosition().x + boundaries.x) > snakeSnack.getPosition().x)
             {
-                eaten = true;
-                score = score + 1; 
+                if((snakeSprite.getPosition().x - boundaries.x) < snakeSnack.getPosition().x)
+                {
+                   if((snakeSprite.getPosition().y - boundaries.y) < snakeSnack.getPosition().y)
+                    {   
+                        if((snakeSprite.getPosition().y + boundaries.y) > snakeSnack.getPosition().y)
+                        { 
+                        eaten = true;
+                        score = score + 1; 
+                        }
+                    }
+                }
             }
-
+ 
 
             if(eaten == true)
             {   // this is for redrawing in a different area
