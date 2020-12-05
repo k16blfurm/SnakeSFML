@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <SFML/System/Vector2.hpp>
 #include <map>
-
+#include <iostream>
 
 int N=30,M=20;
 int size=16;
@@ -15,6 +15,19 @@ int w = size*N;
 int h = size*M;
 int dir,num=4;
 
+
+//getting a random coordinate value
+float coordinate(int point)
+{
+    float temp;
+    // needs to be divisible by 50 b/c the snake box is 50
+    temp = float(point % 50);
+
+    temp = point - temp;
+
+    return temp;
+
+}
 
 int main()
 {
@@ -38,7 +51,7 @@ int main()
     //sf::IntRect boundsSnack();
     const sf::Vector2f boundaries(25.0f, 25.0f);
     sf::Music music;
-
+    int tempSnakeMovement;
     int SnakeMovement;
     int count;
     bool eaten = true;
@@ -110,7 +123,7 @@ int main()
                     SnakeMovement = 0;
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-                {
+                {  
                     SnakeMovement = 1;
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
@@ -140,39 +153,45 @@ int main()
 
         count = count + 1;
 
-        printf("%d \n", count);
 
-        if(count >= 50)
+        if(count >= 400)
         {
             
             if(SnakeMovement == 0)
             {
+                //checks if position is on page and can be divided by 50
                 if(snakeSprite.getPosition().x > 0)
-                {
-                    snakeSprite.move(-4.f, 0.f);
+                {   
+                    //if((int(snakeSprite.getPosition().y) % 50) ==0)
+                    snakeSprite.move(-25.f, 0.f);
                 }
-                
             }
 
             if(SnakeMovement == 1)
             {
                 if(snakeSprite.getPosition().x < 775)
-                    snakeSprite.move(4.f, 0.f);
-                
+                {
+                    //if((int(snakeSprite.getPosition().y) % 50) ==0)
+                    snakeSprite.move(25.f, 0.f);
+                }
             }
 
             if(SnakeMovement == 2)
             {
                 if(snakeSprite.getPosition().y > 0)
-                    snakeSprite.move(0.f, -4.f);
-                
+                {
+                    //if((int(snakeSprite.getPosition().x) % 50) ==0)
+                    snakeSprite.move(0.f, -25.f);
+                }
             }
 
             if(SnakeMovement == 3)
             {
                 if(snakeSprite.getPosition().y < 575)
-                    snakeSprite.move(0.f, 4.f);
-                
+                {
+                    //if((int(snakeSprite.getPosition().x) % 50) ==0)
+                    snakeSprite.move(0.f, 25.f);
+                }
             }
             count = 0;
         }
@@ -190,7 +209,7 @@ int main()
         
         if(menu == true)
         {
-            // Draw the snake/dot to be eaten 
+            // Draw the snake/dot to be eeaten 
             window.draw(snakeSprite);
             window.draw(snakeSnack);
  
@@ -212,7 +231,7 @@ int main()
 
             if(eaten == true)
             {   // this is for redrawing in a different area
-                snakeSnack.setPosition(rand()%801, rand() %601);
+                snakeSnack.setPosition(coordinate(rand()%801), coordinate(rand() %601));
                 eaten = false;
             }
         }
@@ -222,3 +241,4 @@ int main()
     }
     return EXIT_SUCCESS;
 }
+
